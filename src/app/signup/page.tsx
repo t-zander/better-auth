@@ -26,7 +26,6 @@ type FormData = {
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({} as Record<string, string>);
-  const [success, setSuccess] = useState("");
   const { push } = useRouter();
 
   const form = useForm<FormData>({
@@ -63,17 +62,17 @@ export default function SignUpPage() {
       },
       {
         onRequest: (ctx) => {
-          //show loading
+          setLoading(true);
         },
-        onSuccess: (ctx) => {
-          setErrors((prev) => ({}));
+        onSuccess: () => {
+          setErrors({});
           push("/dashboard");
-
-          console.log("CTX", ctx);
+          setLoading(false);
         },
         onError: (ctx) => {
           console.log("ctx", ctx);
           const errorCode = ctx?.error?.code;
+          setLoading(false);
 
           if (errorCode) {
             if (errorCode.includes("PASSWORD")) {
@@ -145,11 +144,6 @@ export default function SignUpPage() {
                 )}
               />
             </div>
-            {success && (
-              <div className="text-green-600 text-sm text-center">
-                {success}
-              </div>
-            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing up..." : "Sign Up"}
             </Button>
