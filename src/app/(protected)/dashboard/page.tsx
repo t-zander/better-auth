@@ -6,10 +6,6 @@ export default async function DashboardPage() {
     headers: await headers(), // you need to pass the headers object.
   });
 
-  if (!session) {
-    return <div>Please log in to access the dashboard.</div>;
-  }
-
   return (
     <div>
       Successfully authenticated! <pre>{JSON.stringify(session, null, 2)}</pre>
