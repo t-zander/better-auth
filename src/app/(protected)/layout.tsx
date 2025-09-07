@@ -1,5 +1,6 @@
-import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { AdminHeader } from "./components/AdminHeader";
 import { AdminSidebar } from "./components/AdminSidebar";
 
@@ -13,7 +14,7 @@ export default async function ProtectedPagesLayout({
   });
 
   if (!session) {
-    return <div>Please log in to access this page.</div>;
+    return redirect("/login");
   }
 
   return (

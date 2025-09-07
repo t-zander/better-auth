@@ -1,21 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
-import { toast } from "sonner";
-import { ErrorContext } from "better-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   email: string;
@@ -52,7 +51,7 @@ export default function SignUpPage() {
   });
 
   async function onSubmit(credentials: FormData) {
-    const { data, error } = await authClient.signUp.email(
+    await authClient.signUp.email(
       {
         email: credentials.email, // user email address
         password: credentials.password, // user password -> min 8 characters by default
@@ -70,7 +69,6 @@ export default function SignUpPage() {
           setLoading(false);
         },
         onError: (ctx) => {
-          console.log("ctx", ctx);
           const errorCode = ctx?.error?.code;
           setLoading(false);
 
