@@ -60,7 +60,7 @@ export default function SignUpPage() {
         callbackURL: "/dashboard", // A URL to redirect to after the user verifies their email (optional)
       },
       {
-        onRequest: (ctx) => {
+        onRequest: () => {
           setLoading(true);
         },
         onSuccess: () => {
