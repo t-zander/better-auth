@@ -1,4 +1,5 @@
 import { BellIcon } from "@heroicons/react/24/outline";
+import { UserMenu } from "./UserMenu";
 
 export function AdminHeader() {
   return (
@@ -15,9 +16,7 @@ export function AdminHeader() {
           <BellIcon className="h-6 w-6 text-blue-500" />
           {/* Notification badge can be added here */}
         </button>
-        <span className="inline-block w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xl shadow ml-2">
-          SA
-        </span>
+        <UserMenu />
       </div>
     </header>
   );

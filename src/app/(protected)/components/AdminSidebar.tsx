@@ -69,7 +69,7 @@ const links = [
 
 export function AdminSidebar() {
   return (
-    <aside className="fixed h-[calc(100vh-2rem)] top-2 left-2  w-[17rem] min-w-[15rem] bg-white p-5 rounded-2xl shadow-sm border flex flex-col z-30">
+    <aside className="fixed h-[calc(100vh-1rem)] top-2 left-2  w-[17rem] min-w-[15rem] bg-white p-5 rounded-2xl shadow-sm border flex flex-col z-30">
       <nav className="flex flex-col gap-2 flex-1">
         {links.map((link) => (
           <Link

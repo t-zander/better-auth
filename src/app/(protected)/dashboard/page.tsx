@@ -8,7 +8,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      Successfully authenticated! <pre>{JSON.stringify(session, null, 2)}</pre>
+      Successfully authenticated! <pre>{session?.user?.email}</pre>
     </div>
   );
 }
