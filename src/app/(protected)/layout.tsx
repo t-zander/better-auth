@@ -14,7 +14,7 @@ export default async function ProtectedPagesLayout({
   });
 
   if (!session) {
-    return redirect("/login");
+    return redirect("/signin");
   }
 
   return (
