@@ -14,46 +14,41 @@ import { useRouter } from "next/navigation";
 export const UserMenu = () => {
   const router = useRouter();
 
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
+  const { data: session } = authClient.useSession();
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="p-0 rounded-full h-8 w-8">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="" alt="User avatar" />
-              <AvatarFallback>
-                {(
-                  session?.user?.name?.slice(0, 1) ??
-                  session?.user?.email?.slice(0, 1) ??
-                  "AU"
-                ).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={async () => {
-              await authClient.signOut({
-                fetchOptions: {
-                  onSuccess: () => {
-                    router.push("/");
-                  },
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="p-0 rounded-full h-8 w-8">
+          <Avatar className="h-8 w-8">
+            {session?.user?.image && (
+              <AvatarImage src={session?.user?.image} alt="User avatar" />
+            )}
+            <AvatarFallback>
+              {(
+                session?.user?.name?.slice(0, 1) ??
+                session?.user?.email?.slice(0, 1) ??
+                "AU"
+              ).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={async () => {
+            await authClient.signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  router.push("/");
                 },
-              });
-            }}
-          >
-            Sign out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+              },
+            });
+          }}
+        >
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
