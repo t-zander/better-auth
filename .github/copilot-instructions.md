@@ -36,6 +36,7 @@
 - Place all new database schemas in `src/lib/db/schemas/`.
 - Keep authentication logic isolated in `src/lib/auth.ts`.
 - Use Bun for scripts and dev server, but npm/yarn/pnpm are also supported.
+- **Export Style:** Always use named exports for components and functions. Only use `export default function` for files named `page.tsx` or `layout.tsx`. For other components, use `export function <ComponentName>() { ... }`.
 
 ## External Integrations
 
