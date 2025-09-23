@@ -1,3 +1,3 @@
-export default function UsersPage() {
+export default async function UsersPage() {
   return <div>Users Page - Under Construction</div>;
 }
