@@ -9,6 +9,7 @@ export default async function DashboardPage() {
   return (
     <div>
       Successfully authenticated! <pre>{session?.user?.email}</pre>
+      <p>User Role: {session?.user?.role}</p>
     </div>
   );
 }

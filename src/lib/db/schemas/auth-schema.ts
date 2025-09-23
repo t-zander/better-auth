@@ -5,15 +5,19 @@ export const user = sqliteTable("user", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" })
-    .$defaultFn(() => !1)
+    .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
+    .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
+    .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
+  role: text("role"),
+  banned: integer("banned", { mode: "boolean" }),
+  banReason: text("ban_reason"),
+  banExpires: integer("ban_expires", { mode: "timestamp" }),
 });
 
 export const session = sqliteTable("session", {
@@ -27,6 +31,7 @@ export const session = sqliteTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  impersonatedBy: text("impersonated_by"),
 });
 
 export const account = sqliteTable("account", {
@@ -57,9 +62,9 @@ export const verification = sqliteTable("verification", {
   value: text("value").notNull(),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
+    () => /* @__PURE__ */ new Date(),
   ),
   updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
+    () => /* @__PURE__ */ new Date(),
   ),
 });

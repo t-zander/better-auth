@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { IoPawSharp, IoPerson, IoStatsChart } from "react-icons/io5";
 
-const links = [
+const shelterAdminLinks = [
   {
     href: "/add-animal",
     label: "Add animal profile",
@@ -67,18 +68,44 @@ const links = [
   },
 ];
 
-export function AdminSidebar() {
+const siteAdminLinks = [
+  {
+    href: "/statistics",
+    label: "View statistics",
+    icon: <IoStatsChart className="w-5 h-5 mr-2 text-blue-500" />,
+  },
+  {
+    href: "/users",
+    label: "Users",
+    icon: <IoPerson className="w-5 h-5 mr-2 text-blue-500" />,
+  },
+  {
+    href: "/shelters",
+    label: "Shelters",
+    icon: <IoPawSharp className="w-5 h-5 mr-2 text-blue-500" />,
+  },
+];
+
+export function AdminSidebar({ role }: { role: string }) {
+  const getLinksBasedOnRole = (role: string) => {
+    if (role === "admin") {
+      return siteAdminLinks;
+    }
+
+    return [];
+  };
+
   return (
     <aside className="fixed h-[calc(100vh-1rem)] top-2 left-2  w-[17rem] min-w-[15rem] bg-white p-5 rounded-2xl shadow-sm border flex flex-col z-30">
       <nav className="flex flex-col gap-2 flex-1">
-        {links.map((link) => (
+        {getLinksBasedOnRole(role).map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className="flex items-center py-2 px-3 rounded-lg font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
+            className="flex items-center py-2 px-3 rounded-lg font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-500 transition-colors group"
           >
             {link.icon}
-            <span className="group-hover:underline">{link.label}</span>
+            <span>{link.label}</span>
           </Link>
         ))}
       </nav>

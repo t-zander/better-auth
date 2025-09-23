@@ -21,7 +21,7 @@ export default async function ProtectedPagesLayout({
     <div className="flex flex-col min-h-screen bg-gray-50">
       <AdminHeader />
       <div className="flex flex-1 h-full">
-        <AdminSidebar />
+        <AdminSidebar role={session.user.role ?? ""} />
         <main className="flex-1 p-4 ml-72">{children}</main>
       </div>
     </div>
