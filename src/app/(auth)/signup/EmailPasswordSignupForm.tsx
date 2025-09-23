@@ -72,6 +72,10 @@ export function EmailPasswordSignupForm() {
         },
         onSuccess: () => {
           setErrors({});
+          /* 
+            when user signs up with email and password,
+            redirect them to select your role screen
+          */
           push("/dashboard");
           setLoading(false);
         },

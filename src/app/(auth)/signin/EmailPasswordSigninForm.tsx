@@ -61,16 +61,18 @@ export function EmailPasswordSigninForm() {
       {
         email: credentials.email,
         password: credentials.password,
-        callbackURL: "/dashboard",
       },
       {
         onRequest: () => {
           setLoading(true);
         },
-        onSuccess: () => {
-          setErrors({});
-          push("/dashboard");
-          setLoading(false);
+        onSuccess: async () => {
+          const session = await authClient.getSession();
+          if (session?.data?.user?.role === "admin") {
+            push("/users");
+          } else {
+            push("/dashboard");
+          }
         },
         onError: (ctx) => {
           const errorCode = ctx?.error?.code;

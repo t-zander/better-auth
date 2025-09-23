@@ -1,7 +1,8 @@
-import * as schema from "@/lib/db/schemas/auth-schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { admin } from "better-auth/plugins";
 import { db } from "../db/db";
+import * as schema from "../db/schemas/auth-schema";
 
 export const auth = betterAuth({
   emailAndPassword: {
@@ -21,4 +22,5 @@ export const auth = betterAuth({
     provider: "sqlite", // or "mysql", "sqlite"
     schema,
   }),
+  plugins: [admin()],
 });
