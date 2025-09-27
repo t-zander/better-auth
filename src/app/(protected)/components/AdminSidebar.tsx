@@ -1,5 +1,18 @@
+"use client";
+
 import Link from "next/link";
-import { IoPawSharp, IoPerson, IoStatsChart } from "react-icons/io5";
+import { usePathname, useSearchParams } from "next/navigation";
+import {
+  IoMenuOutline,
+  IoPawSharp,
+  IoPerson,
+  IoStatsChart,
+} from "react-icons/io5";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../../../components/ui/tooltip";
 
 const shelterAdminLinks = [
   {
@@ -87,6 +100,21 @@ const siteAdminLinks = [
 ];
 
 export function AdminSidebar({ role }: { role: string }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isCollapsed = searchParams?.get("sidebarCollapsed") === "true";
+
+  const createToggleUrl = () => {
+    const params = new URLSearchParams(searchParams);
+    if (isCollapsed) {
+      params.delete("sidebarCollapsed");
+    } else {
+      params.set("sidebarCollapsed", "true");
+    }
+    const queryString = params.toString();
+    return `${pathname}${queryString ? `?${queryString}` : ""}`;
+  };
+
   const getLinksBasedOnRole = (role: string) => {
     if (role === "admin") {
       return siteAdminLinks;
@@ -96,17 +124,42 @@ export function AdminSidebar({ role }: { role: string }) {
   };
 
   return (
-    <aside className="fixed h-[calc(100vh-1rem)] top-2 left-2  w-[17rem] min-w-[15rem] bg-white p-5 rounded-2xl shadow-sm border flex flex-col z-30">
+    <aside
+      className={`fixed h-[calc(100vh-1rem)] top-2 left-2 bg-white p-5 rounded-2xl shadow-sm border flex flex-col z-30 transition-all duration-300 ${
+        isCollapsed ? "w-20" : "w-[17rem]"
+      } min-w-[5rem]`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        {!isCollapsed && <div className="flex-1" />}
+        <Link
+          href={createToggleUrl()}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+        >
+          <IoMenuOutline className="w-5 h-5" />
+        </Link>
+      </div>
+
       <nav className="flex flex-col gap-2 flex-1">
         {getLinksBasedOnRole(role).map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="flex items-center py-2 px-3 rounded-lg font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-500 transition-colors group"
-          >
-            {link.icon}
-            <span>{link.label}</span>
-          </Link>
+          <Tooltip key={link.href}>
+            <TooltipTrigger asChild>
+              <Link
+                href={link.href}
+                className="flex items-center py-2 px-3 rounded-lg font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-500 transition-colors group"
+                title={isCollapsed ? link.label : undefined}
+              >
+                <div className="flex items-center justify-center w-8 h-8">
+                  {link.icon}
+                </div>
+                {!isCollapsed && (
+                  <span className="ml-2 transition-none">{link.label}</span>
+                )}
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right" align="center">
+              <p>{link.label}</p>
+            </TooltipContent>
+          </Tooltip>
         ))}
       </nav>
     </aside>
