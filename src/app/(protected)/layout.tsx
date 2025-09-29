@@ -1,15 +1,14 @@
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { AdminHeader } from "./components/AdminHeader";
-import { AdminSidebar } from "./components/AdminSidebar";
+import { SidebarProvider } from "../../components/ui/sidebar";
+import { AdminHeader } from "./components/Header";
+import { ProtectedPagesSidebar } from "./components/Sidebar";
 
 export default async function ProtectedPagesLayout({
   children,
-  searchParams,
 }: {
   children: React.ReactNode;
-  searchParams: Promise<{ sidebarCollapsed?: string }>;
 }) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -19,21 +18,16 @@ export default async function ProtectedPagesLayout({
     return redirect("/signin");
   }
 
-  const isSidebarCollapsed = (await searchParams)?.sidebarCollapsed === "true";
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <AdminHeader />
-      <div className="flex flex-1 h-full">
-        <AdminSidebar role={session.user.role ?? ""} />
-        <main
-          className={`flex-1 p-4 transition-all duration-300 ${
-            isSidebarCollapsed ? "ml-20" : "ml-72"
-          }`}
-        >
-          {children}
-        </main>
-      </div>
-    </div>
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <ProtectedPagesSidebar role={session.user.role ?? ""} />
+      <main className="flex flex-1 flex-col h-full">
+        <AdminHeader />
+        <div className="flex-1 h-full px-6 py-4">{children}</div>
+      </main>
+    </SidebarProvider>
   );
 }
