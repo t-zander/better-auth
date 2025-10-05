@@ -1,12 +1,12 @@
 import {
-  Sidebar,
+  Sidebar as SCSidebar,
   SidebarContent,
   SidebarGroup,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { IoPawSharp, IoPerson, IoStatsChart } from "react-icons/io5";
+import { IoHome, IoPawSharp, IoPerson, IoStatsChart } from "react-icons/io5";
 
 const shelterAdminLinks = [
   {
@@ -89,37 +89,51 @@ const siteAdminLinks = [
   {
     href: "/shelters",
     label: "Shelters",
+    icon: IoHome,
+  },
+];
+
+const animalsLink = [
+  {
+    href: "/animals",
+    label: "View animals",
     icon: IoPawSharp,
   },
 ];
 
-export function ProtectedPagesSidebar({ role }: { role: string }) {
+export function Sidebar({ role }: { role: string }) {
   const getLinksBasedOnRole = (role: string) => {
+    const links = [];
+
     if (role === "admin") {
-      return siteAdminLinks;
+      links.push(...siteAdminLinks);
     }
 
-    return [];
+    if (role === "user") {
+      links.push(...animalsLink);
+    }
+
+    return links;
   };
 
-  const links = getLinksBasedOnRole(role);
+  const navItems = getLinksBasedOnRole(role);
 
   return (
-    <Sidebar variant="floating" collapsible="icon">
+    <SCSidebar variant="floating" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          {links.map((link) => (
-            <SidebarMenuItem key={link.label}>
+          {navItems.map((navItem) => (
+            <SidebarMenuItem key={navItem.label}>
               <SidebarMenuButton asChild>
-                <Link href={link.href}>
-                  <link.icon className="text-blue-400" />
-                  <span>{link.label}</span>
+                <Link href={navItem.href}>
+                  <navItem.icon className="text-blue-400" />
+                  <span>{navItem.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarGroup>
       </SidebarContent>
-    </Sidebar>
+    </SCSidebar>
   );
 }

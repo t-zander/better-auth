@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth/client";
 import { useRouter } from "next/navigation";
+import { IoLogOut, IoPerson } from "react-icons/io5";
 
 export const UserMenu = () => {
   const router = useRouter();
@@ -37,6 +38,14 @@ export const UserMenu = () => {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={async () => {
+            // TODO
+          }}
+        >
+          <IoPerson />
+          <span>Profile</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
             await authClient.signOut({
               fetchOptions: {
                 onSuccess: () => {
@@ -46,7 +55,8 @@ export const UserMenu = () => {
             });
           }}
         >
-          Sign out
+          <IoLogOut />
+          <span>Sign out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
