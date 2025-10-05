@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { getSignUpRedirectUrl } from "../utils";
 
 type FormData = {
   email: string;
@@ -64,7 +65,7 @@ export function EmailPasswordSignupForm() {
         email: credentials.email,
         password: credentials.password,
         name: credentials.username,
-        callbackURL: "/dashboard",
+        callbackURL: getSignUpRedirectUrl(),
       },
       {
         onRequest: () => {
