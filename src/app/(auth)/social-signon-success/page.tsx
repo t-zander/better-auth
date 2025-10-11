@@ -8,10 +8,10 @@ export default async function SocialSignOnSuccessPage() {
     headers: await headers(),
   });
 
-  if (session) {
+  if (session && typeof session.user.role === "string") {
     // TODO: later we will redirect based on user role and permissions
     // For now, we just redirect to dashboard
-    redirect(getSignUpRedirectUrl());
+    redirect(getSignUpRedirectUrl(session.user.role));
   } else {
     redirect("/signin");
   }

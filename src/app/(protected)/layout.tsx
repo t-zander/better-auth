@@ -32,7 +32,7 @@ export default async function ProtectedPagesLayout({
       {isSidebarShown && <Sidebar role={session.user.role} />}
       <main className="flex flex-1 flex-col h-full">
         <Suspense fallback={<div>Loading...</div>}>
-          <Header isSidebarShown={isSidebarShown} userId={session.user.id} />
+          <Header isSidebarShown={isSidebarShown} />
         </Suspense>
         <div className="flex-1 h-full px-6 py-4">{children}</div>
       </main>
