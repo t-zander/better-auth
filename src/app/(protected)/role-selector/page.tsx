@@ -1,9 +1,20 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
+import { findUserRoleUpdateRequests } from "@/lib/db/user";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { IoHeart, IoHome, IoImages, IoPaw, IoShield } from "react-icons/io5";
+import {
+  IoAlarmOutline,
+  IoCheckmark,
+  IoCloseSharp,
+  IoHeart,
+  IoHome,
+  IoImages,
+  IoPaw,
+  IoShield,
+} from "react-icons/io5";
+import { cn } from "../../../lib/utils";
+import { RoleSelectorButton } from "./RoleSelectorButton";
 
 const roles = [
   {
@@ -42,16 +53,51 @@ export default async function RoleSelectorPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+  const userRolesRequests = await findUserRoleUpdateRequests({
+    userId: session.user.id,
+  });
 
   if (!session) {
     redirect("/signin");
   }
 
-  async function updateUserRole(roleValue: string) {
-    "use server";
-    // Here you would update the user's role in the database
-    console.log(`Updating role to: ${roleValue}`);
-  }
+  const renderActionBasedOnRequestStatus = (
+    requestForGivenRole: (typeof userRolesRequests)[0] | undefined,
+    roleValue: string
+  ) => {
+    if (!requestForGivenRole) {
+      return <RoleSelectorButton role={roleValue} />;
+    }
+
+    if (requestForGivenRole.status === "pending") {
+      return (
+        <p className="text-yellow-500 flex">
+          <IoAlarmOutline size={24} />
+          <span>Request Pending Approval</span>
+        </p>
+      );
+    }
+
+    if (requestForGivenRole.status === "approved") {
+      return (
+        <p className="text-green-500 flex">
+          <IoCheckmark size={24} />
+          <span>Request Approved</span>
+        </p>
+      );
+    }
+
+    if (requestForGivenRole.status === "rejected") {
+      return (
+        <p className="text-red-500 flex">
+          <IoCloseSharp size={24} />{" "}
+          <span>Request Rejected. Contact Admin to Appeal.</span>
+        </p>
+      );
+    }
+
+    return <RoleSelectorButton role={roleValue} />;
+  };
 
   return (
     <div className="container mx-auto">
@@ -69,25 +115,34 @@ export default async function RoleSelectorPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {roles.map((role) => (
-          <Card
-            key={role.value}
-            className="p-6 hover:shadow-lg transition-all duration-200 hover:border-primary hover:scale-[1.02] cursor-pointer"
-          >
-            <div className="flex flex-col items-center text-center">
-              <div className="text-4xl mb-4">
-                {role.icon && <role.icon size={64} />}
+        {roles.map((role) => {
+          const requestForGivenRole = userRolesRequests.find(
+            (userRolesRequest) => role.value === userRolesRequest.role
+          );
+
+          return (
+            <Card
+              key={role.value}
+              className={cn(
+                "p-6",
+                !requestForGivenRole &&
+                  "hover:shadow-lg hover:scale-[1.02] hover:border-primary cursor-pointer transition-all duration-200"
+              )}
+            >
+              <div className="flex flex-col items-center text-center">
+                <div className="text-4xl mb-4">
+                  {role.icon && <role.icon size={64} />}
+                </div>
+                <h2 className="text-xl font-semibold mb-2">{role.name}</h2>
+                <p className="text-gray-500 mb-6">{role.description}</p>
+                {renderActionBasedOnRequestStatus(
+                  requestForGivenRole,
+                  role.value
+                )}
               </div>
-              <h2 className="text-xl font-semibold mb-2">{role.name}</h2>
-              <p className="text-gray-500 mb-6">{role.description}</p>
-              <form action={updateUserRole.bind(null, role.value)}>
-                <Button type="submit" variant="default" className="w-full">
-                  Select
-                </Button>
-              </form>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

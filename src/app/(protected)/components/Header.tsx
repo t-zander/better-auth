@@ -1,10 +1,10 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { IoNotificationsOutline } from "react-icons/io5";
 
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
+import { Notifications } from "./Notifications";
 import { UserMenu } from "./UserMenu";
 
-export function Header({ isSidebarShown }: { isSidebarShown: boolean }) {
+export async function Header({ isSidebarShown }: { isSidebarShown: boolean }) {
   return (
     <header
       className={cn(
@@ -15,10 +15,7 @@ export function Header({ isSidebarShown }: { isSidebarShown: boolean }) {
       {isSidebarShown && <SidebarTrigger />}
 
       <div className="flex items-center gap-6">
-        <button className="relative p-2 rounded-full transition-colors">
-          <IoNotificationsOutline className="h-6 w-6 text-blue-500" />
-          {/* Notification badge can be added here */}
-        </button>
+        <Notifications />
         <UserMenu />
       </div>
     </header>

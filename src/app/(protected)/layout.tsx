@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { SidebarProvider } from "../../components/ui/sidebar";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
@@ -30,7 +31,9 @@ export default async function ProtectedPagesLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       {isSidebarShown && <Sidebar role={session.user.role} />}
       <main className="flex flex-1 flex-col h-full">
-        <Header isSidebarShown={isSidebarShown} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Header isSidebarShown={isSidebarShown} userId={session.user.id} />
+        </Suspense>
         <div className="flex-1 h-full px-6 py-4">{children}</div>
       </main>
     </SidebarProvider>

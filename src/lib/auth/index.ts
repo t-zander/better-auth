@@ -1,7 +1,8 @@
 import * as schema from "@/lib/db/schemas/auth-schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin } from "better-auth/plugins";
+import { nextCookies } from "better-auth/next-js";
+import { admin, organization } from "better-auth/plugins";
 import { db } from "../db/db";
 import { ac, roles } from "./permissions";
 
@@ -24,9 +25,17 @@ export const auth = betterAuth({
     schema,
   }),
   plugins: [
+    nextCookies(),
     admin({
       ac,
       roles,
+    }),
+    organization({
+      allowUserToCreateOrganization: (user) => {
+        console.log("user", user);
+
+        return false; // Disable user-created organizations
+      },
     }),
   ],
 });
