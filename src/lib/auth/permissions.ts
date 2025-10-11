@@ -1,10 +1,13 @@
 import { createAccessControl } from "better-auth/plugins/access";
+import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
 
 const statement = {
+  ...defaultStatements,
   shelter: ["create", "update", "delete"],
   animal: ["create", "update", "delete"],
   animalProfile: ["create", "update", "delete"],
   posts: ["create", "update", "delete"],
+  activities: ["create", "update", "delete", "help"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -27,7 +30,11 @@ export const shelterContentCreator = ac.newRole({
   animalProfile: ["update", "delete"],
 });
 
-export const volunteer = ac.newRole({});
+export const volunteer = ac.newRole({
+  activities: ["create", "update", "delete", "help"],
+});
+
+export const admin = ac.newRole(adminAc.statements);
 
 export const roles = {
   shelterOwner,
@@ -35,4 +42,7 @@ export const roles = {
   shelterContentCreator,
   petOwner,
   volunteer,
+  admin,
 };
+
+export type Role = keyof typeof roles;
