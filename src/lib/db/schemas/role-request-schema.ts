@@ -7,7 +7,7 @@ import {
   createUpdateSchema,
 } from "drizzle-zod";
 import z from "zod";
-import { user } from "./schema";
+import { user } from "./auth-schema";
 
 export const roleRequest = sqliteTable("role_request", {
   id: text("id")

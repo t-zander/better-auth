@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { IoHome, IoPawSharp, IoPerson, IoStatsChart } from "react-icons/io5";
+import { Roles } from "../../../lib/auth/permissions";
 
 const shelterAdminLinks = [
   {
@@ -75,7 +76,13 @@ const shelterAdminLinks = [
   },
 ];
 
-const siteAdminLinks = [
+const sheltersLink = {
+  href: "/shelters",
+  label: "Shelters",
+  icon: IoHome,
+};
+
+const adminLinks = [
   {
     href: "/statistics",
     label: "View statistics",
@@ -86,31 +93,27 @@ const siteAdminLinks = [
     label: "Users",
     icon: IoPerson,
   },
-  {
-    href: "/shelters",
-    label: "Shelters",
-    icon: IoHome,
-  },
+  sheltersLink,
 ];
 
-const animalsLink = [
-  {
-    href: "/animals",
-    label: "View animals",
-    icon: IoPawSharp,
-  },
-];
+const animalsLink = {
+  href: "/animals",
+  label: "Animals",
+  icon: IoPawSharp,
+};
 
 export function Sidebar({ role }: { role: string }) {
   const getLinksBasedOnRole = (role: string) => {
+    const roles = role.split(",");
+
     const links = [];
 
-    if (role === "admin") {
-      links.push(...siteAdminLinks);
+    if (roles.includes(Roles.admin)) {
+      links.push(...adminLinks);
     }
 
-    if (role === "user") {
-      links.push(...animalsLink);
+    if (roles.includes(Roles.shelterOwner)) {
+      links.push(sheltersLink);
     }
 
     return links;

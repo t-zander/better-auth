@@ -16,7 +16,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { getSignUpRedirectUrl } from "../utils";
+import { Role } from "../../../lib/auth/permissions";
+import { getStartPageRedirectUrl } from "../utils";
 
 type FormData = {
   email: string;
@@ -65,19 +66,21 @@ export function EmailPasswordSignupForm() {
         email: credentials.email,
         password: credentials.password,
         name: credentials.username,
-        callbackURL: getSignUpRedirectUrl(),
       },
       {
         onRequest: () => {
           setLoading(true);
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+          // TODO: This possibly can be avoided if the session is returned on sign up
+          const session = await authClient.getSession();
+
           setErrors({});
-          /* 
-            when user signs up with email and password,
-            redirect them to select your role screen
-          */
-          push("/dashboard");
+          push(
+            getStartPageRedirectUrl(
+              session.data?.user?.role as Role | undefined
+            )
+          );
           setLoading(false);
         },
         onError: (ctx) => {

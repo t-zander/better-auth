@@ -45,4 +45,17 @@ export const roles = {
   admin,
 };
 
-export type Role = keyof typeof roles;
+export type Role = keyof typeof roles | "user";
+const ootbRole = { user: "user" };
+
+function getAllRolesEnum() {
+  return Object.keys(roles).reduce(
+    (acc, role) => {
+      acc[role as Role] = role as Role;
+      return acc;
+    },
+    { ...ootbRole } as Record<Role, Role>
+  );
+}
+
+export const Roles = getAllRolesEnum();
