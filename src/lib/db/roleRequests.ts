@@ -20,7 +20,7 @@ export function findAllRoleRequests() {
   });
 }
 
-/** Updates status of the role request. TThis will activate user role or mark it as rejected */
+/** Updates status of the role request. This will activate user role or mark it as rejected */
 export async function updateRoleRequest({
   id,
   status,

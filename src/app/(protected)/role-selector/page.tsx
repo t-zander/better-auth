@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { findUserRoleUpdateRequests } from "@/lib/db/user";
+import { cn } from "@/lib/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
@@ -13,7 +14,6 @@ import {
   IoPaw,
   IoShield,
 } from "react-icons/io5";
-import { cn } from "../../../lib/utils";
 import { RoleSelectorButton } from "./RoleSelectorButton";
 
 const roles = [
@@ -71,7 +71,7 @@ export default async function RoleSelectorPage() {
 
     if (requestForGivenRole.status === "pending") {
       return (
-        <p className="text-yellow-500 flex">
+        <p className="text-yellow-500 flex gap-2">
           <IoAlarmOutline size={24} />
           <span>Request Pending Approval</span>
         </p>
@@ -80,7 +80,7 @@ export default async function RoleSelectorPage() {
 
     if (requestForGivenRole.status === "approved") {
       return (
-        <p className="text-green-500 flex">
+        <p className="text-green-500 flex gap-2">
           <IoCheckmark size={24} />
           <span>Request Approved</span>
         </p>
@@ -89,8 +89,8 @@ export default async function RoleSelectorPage() {
 
     if (requestForGivenRole.status === "rejected") {
       return (
-        <p className="text-red-500 flex">
-          <IoCloseSharp size={24} />{" "}
+        <p className="text-red-500 flex gap-2">
+          <IoCloseSharp size={24} />
           <span>Request Rejected. Contact Admin to Appeal.</span>
         </p>
       );

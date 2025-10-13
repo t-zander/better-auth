@@ -1,7 +1,11 @@
-export function getSignUpRedirectUrl(userRole: string) {
+import { Role, Roles } from "@/lib/auth/permissions";
+
+export function getStartPageRedirectUrl(userRole: Role | undefined) {
+  if (!userRole || userRole === Roles.user) return "/role-selector";
+
   const roles = userRole.split(",");
 
-  if (roles.includes("shelterOwner") || roles.includes("admin")) {
+  if (roles.includes(Roles.shelterOwner) || roles.includes(Roles.admin)) {
     return "/dashboard";
   }
 

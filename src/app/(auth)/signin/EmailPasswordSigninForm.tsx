@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
+import { Role } from "@/lib/auth/permissions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { getStartPageRedirectUrl } from "../utils";
 
 type FormData = {
   email: string;
@@ -68,11 +70,11 @@ export function EmailPasswordSigninForm() {
         },
         onSuccess: async () => {
           const session = await authClient.getSession();
-          if (session?.data?.user?.role === "admin") {
-            push("/users");
-          } else {
-            push("/dashboard");
-          }
+          push(
+            getStartPageRedirectUrl(
+              session?.data?.user?.role as Role | undefined
+            )
+          );
         },
         onError: (ctx) => {
           const errorCode = ctx?.error?.code;

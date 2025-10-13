@@ -7,7 +7,11 @@ import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 
 const shouldShowSidebar = (roles: string[]) => {
-  return roles.includes("admin");
+  if (roles.length === 1 && roles[0] === "user") {
+    return false;
+  }
+
+  return true;
 };
 
 export default async function ProtectedPagesLayout({

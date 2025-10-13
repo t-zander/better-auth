@@ -1,17 +1,16 @@
 import { auth } from "@/lib/auth";
+import { Role, Roles } from "@/lib/auth/permissions";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getSignUpRedirectUrl } from "../utils";
+import { getStartPageRedirectUrl } from "../utils";
 
 export default async function SocialSignOnSuccessPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (session && typeof session.user.role === "string") {
-    // TODO: later we will redirect based on user role and permissions
-    // For now, we just redirect to dashboard
-    redirect(getSignUpRedirectUrl(session.user.role));
+  if (session && session.user.role && session.user.role in Roles) {
+    redirect(getStartPageRedirectUrl(session.user.role as Role));
   } else {
     redirect("/signin");
   }

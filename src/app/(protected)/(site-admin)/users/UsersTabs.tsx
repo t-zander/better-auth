@@ -16,7 +16,6 @@ export function UsersTabs({
     <Tabs
       defaultValue={currentTab ?? "allUsers"}
       onValueChange={(e) => {
-        console.log("Tab changed", e);
         router.push(`/users?currentTab=${e}`);
       }}
     >

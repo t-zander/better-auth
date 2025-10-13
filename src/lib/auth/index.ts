@@ -31,7 +31,9 @@ export const auth = betterAuth({
       roles,
     }),
     organization({
-      allowUserToCreateOrganization: (user) => {
+      ac,
+      roles,
+      allowUserToCreateOrganization: async (user) => {
         console.log("user", user);
 
         return false; // Disable user-created organizations
