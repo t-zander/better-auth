@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { roleRequest } from "./role-request-schema";
+import { roleRequest } from "./role-request";
+import { shelterToUser } from "./shelter-to-user";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -25,6 +26,7 @@ export const user = sqliteTable("user", {
 
 export const userRelations = relations(user, ({ many }) => ({
   roleRequests: many(roleRequest),
+  shelterToUser: many(shelterToUser),
 }));
 
 export const session = sqliteTable("session", {
