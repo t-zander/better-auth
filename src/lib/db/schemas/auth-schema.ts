@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { roleRequest } from "./role-request";
-import { shelterToUser } from "./shelter-to-user";
+import { animals } from "./animals-schema";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -21,12 +20,10 @@ export const user = sqliteTable("user", {
   banned: integer("banned", { mode: "boolean" }),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp" }),
-  verificationStatus: text("verification_status"),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
-  roleRequests: many(roleRequest),
-  shelterToUser: many(shelterToUser),
+  members: many(member),
 }));
 
 export const session = sqliteTable("session", {
@@ -41,6 +38,7 @@ export const session = sqliteTable("session", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   impersonatedBy: text("impersonated_by"),
+  activeOrganizationId: text("active_organization_id"),
 });
 
 export const account = sqliteTable("account", {
@@ -77,3 +75,69 @@ export const verification = sqliteTable("verification", {
     () => /* @__PURE__ */ new Date()
   ),
 });
+
+export const organization = sqliteTable("organization", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").unique(),
+  logo: text("logo"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  metadata: text("metadata"),
+  address: text("address"),
+  description: text("description"),
+  phone: text("phone"),
+});
+
+export const organizationRelations = relations(organization, ({ many }) => ({
+  members: many(member),
+  invitations: many(invitation),
+  animals: many(animals),
+}));
+
+export const member = sqliteTable("member", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  role: text("role").default("member").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
+export const memberRelations = relations(member, ({ one }) => ({
+  organization: one(organization, {
+    fields: [member.organizationId],
+    references: [organization.id],
+  }),
+  user: one(user, {
+    fields: [member.userId],
+    references: [user.id],
+  }),
+}));
+
+export const invitation = sqliteTable("invitation", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  role: text("role"),
+  status: text("status").default("pending").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  inviterId: text("inviter_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const invitationRelations = relations(invitation, ({ one }) => ({
+  shelter: one(organization, {
+    fields: [invitation.organizationId],
+    references: [organization.id],
+  }),
+  inviter: one(user, {
+    fields: [invitation.inviterId],
+    references: [user.id],
+  }),
+}));

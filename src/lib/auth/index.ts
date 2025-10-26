@@ -4,7 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { admin, organization } from "better-auth/plugins";
 import { db } from "../db/db";
-import { ac, roles } from "./permissions";
+import { ac, Roles, roles } from "./permissions";
 
 export const auth = betterAuth({
   emailAndPassword: {
@@ -31,12 +31,43 @@ export const auth = betterAuth({
       roles,
     }),
     organization({
+      schema: {
+        organization: {
+          additionalFields: {
+            address: {
+              type: "string",
+              required: false,
+            },
+            description: {
+              type: "string",
+              required: false,
+            },
+            phone: {
+              type: "string",
+              required: false,
+            },
+          },
+        },
+      },
       ac,
       roles,
+      organizationHooks: {
+        beforeAddMember: async ({ member }) => {
+          return {
+            data: {
+              ...member,
+              role: member.role === "owner" ? Roles.shelterOwner : member.role,
+            },
+          };
+        },
+      },
+      /* Only shelter owner can create a shelter */
       allowUserToCreateOrganization: async (user) => {
-        console.log("user", user);
+        const roles = user?.role?.split(",") || [];
 
-        return false; // Disable user-created organizations
+        if (!roles.includes(Roles.shelterOwner)) return false;
+
+        return true;
       },
     }),
   ],

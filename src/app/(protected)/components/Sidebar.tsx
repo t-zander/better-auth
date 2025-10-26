@@ -77,7 +77,7 @@ const shelterAdminLinks = [
 ];
 
 const sheltersLink = {
-  href: "/shelters",
+  href: "/shelters-management",
   label: "Shelters",
   icon: IoHome,
 };
