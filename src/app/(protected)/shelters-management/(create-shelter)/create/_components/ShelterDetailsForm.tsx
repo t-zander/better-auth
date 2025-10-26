@@ -19,17 +19,12 @@ import { useForm } from "react-hook-form";
 import { IoCloudUploadOutline, IoLocationOutline } from "react-icons/io5";
 import * as z from "zod";
 
-// Define the form schema using zod
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Shelter name must be at least 2 characters.",
   }),
-  description: z.string()/* .min(10, {
-    message: "Description should be at least 10 characters.",
-  }) */,
-  location: z.string()/* .min(5, {
-    message: "Location should be at least 5 characters.",
-  }) */,
+  description: z.string(),
+  location: z.string(),
 });
 
 interface ShelterDetailsFormProps {

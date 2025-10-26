@@ -16,26 +16,6 @@ export default async function SheltersPage() {
     redirect("/signin");
   }
 
-  console.log("session?.user.role", roles);
-  // const { success: canCreateShelters } = await ;
-
-  // TODO: think on permission management to make this easier
-  // should we make viewProtectedShelters permission?
-  // then it will be possible to show different tabs based on permissions
-
-  /* const { success: canAdministerShelters } = await auth.api.userHasPermission({
-    body: {
-      userId: session?.user.id || "",
-      permission: {
-        shelter: ["administer"],
-      },
-    },
-  }); */
-
-  // show proper tabs based on user role
-  // if user has both shelter owner and shelter admin roles show both tabs
-  // if user has only one of the roles show only that tab
-
   return (
     <Tabs defaultValue="my-shelters" className="w-full">
       <TabsList>

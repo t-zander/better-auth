@@ -1,32 +1,52 @@
 import { auth } from "@/lib/auth";
 import { Role } from "@/lib/auth/permissions";
-import { findUserShelters } from "@/lib/db/shelters";
 import { headers } from "next/headers";
 
-export async function getUserShelters(forRole: Role) {
+type GetUserSheltersSuccess = {
+  success: true;
+  shelters: Awaited<ReturnType<typeof auth.api.listOrganizations>>;
+};
+type GetUserSheltersError = {
+  success: false;
+  error: string;
+};
+
+export async function getUserShelters(
+  forRole: Role
+): Promise<GetUserSheltersSuccess | GetUserSheltersError> {
   const session = await auth.api.getSession({ headers: await headers() });
 
   const currentUser = session?.user?.id;
 
   if (!currentUser) {
-    return [];
+    return {
+      success: true,
+      shelters: [],
+    };
   }
 
   const roles = session.user?.role?.split(",") ?? [];
 
+  /* Current user is not allowed to see any shelters */
   if (!roles.includes(forRole)) {
-    return [];
+    return {
+      success: true,
+      shelters: [],
+    };
   }
 
-  // fetch all shelters where userId is current user and user has the specified role
-  // TODO: proper error handling
-  const shelters = await findUserShelters({
-    userId: currentUser,
-    role: forRole,
-  });
-
-  // based on user permission fetch shelters
-  // if this is a shelter owner fetch
-  // Placeholder: Fetch shelters from the database
-  return shelters;
+  try {
+    const shelters = await auth.api.listOrganizations({
+      headers: await headers(),
+    });
+    return {
+      success: true,
+      shelters,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Failed to fetch shelters",
+    };
+  }
 }
