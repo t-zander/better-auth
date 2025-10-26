@@ -28,7 +28,9 @@ export async function MyShelters() {
         >
           <div>
             <h2 className="text-lg font-semibold">{shelter.name}</h2>
-            <p className="text-sm text-gray-600">{shelter.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {shelter.description}
+            </p>
           </div>
           <Button className="mt-2" asChild>
             <Link href={`/shelters-management/edit/${shelter.id}`}>
