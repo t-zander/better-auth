@@ -5,7 +5,7 @@ import {
   roleRequest,
   RoleRequestInsert,
   RoleUpdateRequestFind,
-} from "./schemas/role-request-schema";
+} from "./schemas/role-request";
 
 /** Given user id and role searches for existing role update request */
 export function findUserRoleUpdateRequest({
