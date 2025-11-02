@@ -15,7 +15,7 @@ export function ShelterPets() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold flex items-center justify-between">
-          My pets
+          Pets
           <div className="flex space-x-1">
             <Button asChild variant="ghost" size="sm">
               <Link href={`${basePath}`}>
