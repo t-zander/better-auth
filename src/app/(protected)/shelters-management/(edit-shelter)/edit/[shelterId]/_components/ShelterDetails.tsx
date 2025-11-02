@@ -8,7 +8,15 @@ import { useParams } from "next/navigation";
 import { IoCreateOutline, IoLocationOutline, IoPeople } from "react-icons/io5";
 import { getBasePath } from "../_utils/urlUtils";
 
-export function ShelterDetails() {
+export function ShelterDetails({
+  name,
+  shelterOwnersAmount,
+  shelterAdminsAmount,
+}: {
+  name: string;
+  shelterOwnersAmount: number;
+  shelterAdminsAmount: number;
+}) {
   const { shelterId } = useParams<{ shelterId: string }>();
   const basePath = getBasePath(shelterId);
 
@@ -30,14 +38,18 @@ export function ShelterDetails() {
           <AvatarFallback>SF</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1">
-          <h3 className="font-semibold">SmallFriend</h3>
+          <h3 className="font-semibold">{name}</h3>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <IoLocationOutline />
             <span>Brussels, Belgium</span>
           </div>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <IoPeople />
-            <span>3 admins</span>
+            <span>{shelterOwnersAmount} owner(s)</span>
+          </div>
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <IoPeople />
+            <span>{shelterAdminsAmount} admin(s)</span>
           </div>
           <Badge className="mt-1 w-fit bg-green-100 text-green-800">
             Active shelter

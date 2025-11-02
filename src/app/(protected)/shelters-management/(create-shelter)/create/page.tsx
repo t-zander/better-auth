@@ -8,14 +8,6 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 import { createShelter } from "./actions";
 
-interface ShelterData {
-  id: string;
-  name: string;
-  description: string;
-  location: string;
-  avatar?: string | null;
-}
-
 interface ShelterFormValues {
   name: string;
   description: string;
