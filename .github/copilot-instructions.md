@@ -38,6 +38,7 @@
 - Use Bun for scripts and dev server, but npm/yarn/pnpm are also supported.
 - **Export Style:** Always use named exports for components and functions. Only use `export default function` for files named `page.tsx` or `layout.tsx`. For other components, use `export function <ComponentName>() { ... }`.
 - prefer icons from react-icons/io-5 (Ionicons) for consistency.
+- ignore anything in `src/components/ui` as these are auto-generated UI components.
 
 ## External Integrations
 

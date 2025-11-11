@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { animals } from "./animals-schema";
+import { shelterMemberRequest } from "./shelter-member-request";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -24,6 +25,7 @@ export const user = sqliteTable("user", {
 
 export const userRelations = relations(user, ({ many }) => ({
   members: many(member),
+  userToShelterMemberRequests: many(shelterMemberRequest),
 }));
 
 export const session = sqliteTable("session", {
@@ -92,6 +94,7 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   members: many(member),
   invitations: many(invitation),
   animals: many(animals),
+  shelerToMemberRequests: many(shelterMemberRequest),
 }));
 
 export const member = sqliteTable("member", {

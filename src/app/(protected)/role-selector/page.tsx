@@ -1,5 +1,11 @@
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { auth } from "@/lib/auth";
+import { Role, Roles } from "@/lib/auth/permissions";
 import { findUserRoleUpdateRequests } from "@/lib/db/user";
 import { cn } from "@/lib/utils";
 import { headers } from "next/headers";
@@ -21,31 +27,31 @@ const roles = [
     name: "Shelter Owner",
     description: "Manage shelters, staff, and have full administrative control",
     icon: IoHome,
-    value: "shelterOwner",
+    value: Roles.shelterOwner,
   },
   {
     name: "Pet Owner",
     description: "Register and manage your pets, track adoption applications",
     icon: IoPaw,
-    value: "petOwner",
+    value: Roles.petOwner,
   },
   {
     name: "Shelter Admin",
     description: "Assist in shelter management and administrative tasks",
     icon: IoShield,
-    value: "shelterAdmin",
+    value: Roles.shelterAdmin,
   },
   {
     name: "Shelter Content Creator",
     description: "Manage pet profiles, photos, and shelter content",
     icon: IoImages,
-    value: "shelterContentCreator",
+    value: Roles.shelterContentCreator,
   },
   {
     name: "Volunteer",
     description: "Help with animal care, events, and shelter support",
     icon: IoHeart,
-    value: "volunteer",
+    value: Roles.volunteer,
   },
 ];
 
@@ -63,7 +69,7 @@ export default async function RoleSelectorPage() {
 
   const renderActionBasedOnRequestStatus = (
     requestForGivenRole: (typeof userRolesRequests)[0] | undefined,
-    roleValue: string
+    roleValue: Role
   ) => {
     if (!requestForGivenRole) {
       return <RoleSelectorButton role={roleValue} />;
@@ -124,22 +130,26 @@ export default async function RoleSelectorPage() {
             <Card
               key={role.value}
               className={cn(
-                "p-6",
                 !requestForGivenRole &&
-                  "hover:shadow-lg hover:scale-[1.02] hover:border-primary cursor-pointer transition-all duration-200"
+                  "hover:shadow-lg hover:border-primary cursor-pointer transition-all duration-200 flex flex-col"
               )}
             >
-              <div className="flex flex-col items-center text-center">
+              <CardHeader className="flex flex-col items-center text-center">
                 <div className="text-4xl mb-4">
                   {role.icon && <role.icon size={64} />}
                 </div>
                 <h2 className="text-xl font-semibold mb-2">{role.name}</h2>
+              </CardHeader>
+              <CardContent className="flex-1">
                 <p className="text-gray-500 mb-6">{role.description}</p>
+              </CardContent>
+
+              <CardFooter>
                 {renderActionBasedOnRequestStatus(
                   requestForGivenRole,
                   role.value
                 )}
-              </div>
+              </CardFooter>
             </Card>
           );
         })}

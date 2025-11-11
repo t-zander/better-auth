@@ -10,22 +10,24 @@ export function RoleSelectorButton({ role }: { role: string }) {
   const [pending, startTransition] = useTransition();
 
   return (
-    <Button
-      variant="default"
-      className="w-full"
-      disabled={pending}
-      onClick={async () => {
-        startTransition(async () => {
-          const result = await updateUserRoleAction(role);
-          if (result?.success) {
-            toast.success(result.message);
-          } else {
-            toast.error(result?.message || "Failed to update role");
-          }
-        });
-      }}
-    >
-      {pending ? <Spinner /> : "Select"}
-    </Button>
+    <div className="w-full flex flex-col gap-4 self-end">
+      <Button
+        variant="default"
+        className="w-full"
+        disabled={pending}
+        onClick={async () => {
+          startTransition(async () => {
+            const result = await updateUserRoleAction(role);
+            if (result?.success) {
+              toast.success(result.message);
+            } else {
+              toast.error(result?.message || "Failed to update role");
+            }
+          });
+        }}
+      >
+        {pending ? <Spinner /> : "Select"}
+      </Button>
+    </div>
   );
 }
