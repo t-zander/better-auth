@@ -4,6 +4,7 @@ import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
 const statement = {
   ...defaultStatements,
   shelter: ["create", "update", "delete"],
+  shelterMembers: ["add", "remove", "invite", "approvePendingRequests", "view"],
   animal: ["create", "update", "delete"],
   animalProfile: ["create", "update", "delete"],
   posts: ["create", "update", "delete"],
@@ -14,6 +15,7 @@ export const ac = createAccessControl(statement);
 
 export const shelterOwner = ac.newRole({
   shelter: ["create", "update", "delete"],
+  shelterMembers: ["add", "remove", "invite", "approvePendingRequests", "view"],
 });
 
 export const shelterAdmin = ac.newRole({

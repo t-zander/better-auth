@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { ShelterDetails } from "./_components/shelter-details/ShelterDetails";
-import { ShelterMembers } from "./_components/shelter-members/ShelterMembers";
+import { ShelterMembersTable } from "./_components/shelter-members/ShelterMembersTable";
 
 export default async function DetailsPage({
   params,
@@ -24,6 +24,25 @@ export default async function DetailsPage({
     },
   });
 
+  const canSeeMembers = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      organizationId: shelterId,
+      permissions: {
+        shelterMembers: ["view"],
+      },
+    },
+  });
+  const canManagePendingApprovals = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      organizationId: shelterId,
+      permissions: {
+        shelterMembers: ["approvePendingRequests"],
+      },
+    },
+  });
+
   return (
     <div>
       <h1 className="text-2xl font-bold">Shelter Details</h1>
@@ -32,7 +51,14 @@ export default async function DetailsPage({
         <Tabs defaultValue="details">
           <TabsList>
             <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="members">Members</TabsTrigger>
+            {canSeeMembers && (
+              <TabsTrigger value="members">Members</TabsTrigger>
+            )}
+            {canManagePendingApprovals && (
+              <TabsTrigger value="pending-approvals">
+                Pending Approvals
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="details">
@@ -68,8 +94,22 @@ export default async function DetailsPage({
               </CardHeader>
 
               <CardContent className="p-4">
-                <ShelterMembers members={fullOrganization?.members ?? []} />
+                <ShelterMembersTable
+                  members={fullOrganization?.members ?? []}
+                />
               </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="pending-approvals">
+            <Card>
+              <CardHeader>
+                <CardTitle>Pending Approvals</CardTitle>
+                <CardDescription>
+                  Accept or reject pending member requests here.
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="p-4"></CardContent>
             </Card>
           </TabsContent>
         </Tabs>

@@ -9,11 +9,11 @@ import { headers } from "next/headers";
 
 export async function updateUserRoleAction(role: string) {
   const session = await auth.api.getSession({ headers: await headers() });
-  console.log(`Updating role to: ${role}`, session);
 
   if (!session) {
     return { success: false, message: "You are not authenticated" };
   }
+
   // Assign Shelter owner role to the user
   // set validation status to pending
   // Later: send an email / notification to site admin for approval
