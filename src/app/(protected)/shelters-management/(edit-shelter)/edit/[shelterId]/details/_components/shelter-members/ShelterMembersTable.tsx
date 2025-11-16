@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,8 +10,8 @@ import {
 } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import { Roles } from "@/lib/auth/permissions";
-import { IoPersonAddOutline } from "react-icons/io5";
 import { Actions } from "./Actions";
+import { InviteNewMember } from "./AddNewMember";
 
 const roleToUserFriendlyName: Record<string, string> = {
   shelterOwner: "Shelter owner",
@@ -30,10 +29,7 @@ export function ShelterMembersTable({
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button>
-          <IoPersonAddOutline className="mr-2 h-4 w-4" />
-          Add New Member
-        </Button>
+        <InviteNewMember />
       </div>
       <Table>
         <TableHeader>
