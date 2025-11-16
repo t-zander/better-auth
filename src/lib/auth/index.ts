@@ -31,6 +31,10 @@ export const auth = betterAuth({
       roles,
     }),
     organization({
+      sendInvitationEmail: async (data) => {
+        const inviteLink = `${process.env.WEBSITE_BASE_URL}/accept-invitation/${data.id}`;
+        console.log("FF", inviteLink);
+      },
       schema: {
         organization: {
           additionalFields: {

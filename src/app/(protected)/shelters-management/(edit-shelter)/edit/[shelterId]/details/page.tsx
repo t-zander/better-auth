@@ -33,12 +33,12 @@ export default async function DetailsPage({
       },
     },
   });
-  const canManagePendingApprovals = await auth.api.hasPermission({
+  const canViewPendingInvites = await auth.api.hasPermission({
     headers: await headers(),
     body: {
       organizationId: shelterId,
       permissions: {
-        shelterMembers: ["approvePendingRequests"],
+        invitation: ["view"],
       },
     },
   });
@@ -54,10 +54,8 @@ export default async function DetailsPage({
             {canSeeMembers && (
               <TabsTrigger value="members">Members</TabsTrigger>
             )}
-            {canManagePendingApprovals && (
-              <TabsTrigger value="pending-approvals">
-                Pending Approvals
-              </TabsTrigger>
+            {canViewPendingInvites && (
+              <TabsTrigger value="pending-approvals">Invites</TabsTrigger>
             )}
           </TabsList>
 

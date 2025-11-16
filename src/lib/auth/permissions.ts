@@ -1,21 +1,26 @@
 import { createAccessControl } from "better-auth/plugins/access";
-import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
+import {
+  adminAc,
+  defaultStatements,
+} from "better-auth/plugins/organization/access";
 
 const statement = {
   ...defaultStatements,
   shelter: ["create", "update", "delete"],
-  shelterMembers: ["add", "remove", "invite", "approvePendingRequests", "view"],
+  shelterMembers: ["add", "remove", "invite", "view"],
   animal: ["create", "update", "delete"],
   animalProfile: ["create", "update", "delete"],
   posts: ["create", "update", "delete"],
   activities: ["create", "update", "delete", "help"],
+  invitation: ["create", "cancel", "view"],
 } as const;
 
 export const ac = createAccessControl(statement);
 
 export const shelterOwner = ac.newRole({
   shelter: ["create", "update", "delete"],
-  shelterMembers: ["add", "remove", "invite", "approvePendingRequests", "view"],
+  shelterMembers: ["add", "remove", "invite", "view"],
+  invitation: ["create", "cancel", "view"],
 });
 
 export const shelterAdmin = ac.newRole({

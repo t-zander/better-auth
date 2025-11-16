@@ -60,6 +60,16 @@
   bun dev
   ```
 
+## UI Component Import Rules
+
+- All imports of shadcn/ui components must come from the `@/components/ui/...` path.
+- Never use Radix components directly; always use the corresponding shadcn/ui wrapper from `@/components/ui/...`.
+- Always import `useForm` from `react-hook-form`.
+- Always import `Form` from `@/components/ui/form`.
+- Always import using alias `@/` for project files instead of relative paths where possible.
+  Good: `import { Button } from "@/components/ui/button";`
+  Bad: `import { Button } from "../../../../components/ui/button";`
+
 ## References
 
 - See `README.md` for Next.js basics.
