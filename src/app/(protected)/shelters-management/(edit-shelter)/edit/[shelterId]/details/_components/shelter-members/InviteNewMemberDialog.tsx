@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -96,7 +97,9 @@ export function InviteNewMemberDialog({
             )}
           />
           <DialogFooter>
-            <Button type="submit">Send invite</Button>
+            <DialogClose asChild>
+              <Button type="submit">Send invite</Button>
+            </DialogClose>
           </DialogFooter>
         </form>
       </Form>
