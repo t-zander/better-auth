@@ -11,7 +11,7 @@ import {
 import { auth } from "@/lib/auth";
 import { Roles } from "@/lib/auth/permissions";
 import { Actions } from "./Actions";
-import { InviteNewMember } from "./AddNewMember";
+import { InviteNewMember } from "./InviteNewMember";
 
 const roleToUserFriendlyName: Record<string, string> = {
   shelterOwner: "Shelter owner",

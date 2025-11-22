@@ -12,107 +12,136 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
+import { Role } from "@/lib/auth/permissions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Role } from "../../../lib/auth/permissions";
 import { getStartPageRedirectUrl } from "../utils";
 
-type FormData = {
+type FormValues = {
   email: string;
   password: string;
   username: string;
 };
 
-export function EmailPasswordSignupForm() {
+export function EmailPasswordSignupForm({
+  email,
+  invitationId,
+}: Partial<Pick<FormValues, "email">> & { invitationId?: string }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({} as Record<string, string>);
   const { push } = useRouter();
 
-  const form = useForm<FormData>({
-    resolver: async (formData) => {
+  const form = useForm<FormValues>({
+    resolver: async (values) => {
+      const resolverErrors = {
+        ...(errors.root
+          ? {
+              root: {
+                type: "required",
+                message: errors.root,
+              },
+            }
+          : {}),
+        ...(errors.password
+          ? {
+              password: {
+                type: "required",
+                message: errors.password,
+              },
+            }
+          : {}),
+      };
+
       return {
-        values: formData,
-        errors: {
-          ...(errors.root
-            ? {
-                root: {
-                  message: errors.root,
-                },
-              }
-            : {}),
-          ...(errors.password
-            ? {
-                password: {
-                  message: errors.password,
-                },
-              }
-            : {}),
-        },
+        errors: resolverErrors,
+        values: Object.keys(resolverErrors).length > 0 ? {} : values,
       };
     },
-    defaultValues: {
-      email: "",
+    values: {
+      email: email ?? "",
       password: "",
       username: "",
     },
     reValidateMode: "onChange",
   });
 
-  async function onSubmit(credentials: FormData) {
-    await authClient.signUp.email(
-      {
-        email: credentials.email,
-        password: credentials.password,
-        name: credentials.username,
-      },
-      {
-        onRequest: () => {
-          setLoading(true);
-        },
-        onSuccess: async () => {
-          // TODO: This possibly can be avoided if the session is returned on sign up
-          const session = await authClient.getSession();
+  function handleSignUpError(error: {
+    code?: string | undefined;
+    message?: string | undefined;
+    status: number;
+    statusText: string;
+  }) {
+    const errorCode = error?.code;
 
-          setErrors({});
-          push(
-            getStartPageRedirectUrl(
-              session.data?.user?.role as Role | undefined
-            )
-          );
-          setLoading(false);
-        },
-        onError: (ctx) => {
-          setLoading(false);
+    if (!errorCode) {
+      toast(error.message);
+      return;
+    }
+    if (
+      errorCode === authClient.$ERROR_CODES.PASSWORD_TOO_LONG ||
+      errorCode === authClient.$ERROR_CODES.PASSWORD_TOO_SHORT
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        password:
+          error?.message ?? "Password does not meet length requirements.",
+      }));
+      return;
+    }
+    if (errorCode === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
+      setErrors((prev) => ({
+        ...prev,
+        root: "User with this email already exists.",
+      }));
+      return;
+    }
+  }
 
-          const errorCode = ctx?.error?.code;
-          if (!errorCode) {
-            toast(ctx.error.message);
-            return;
-          }
+  async function onSubmit(credentials: FormValues) {
+    setLoading(true);
 
-          if (
-            errorCode === authClient.$ERROR_CODES.PASSWORD_TOO_LONG ||
-            errorCode === authClient.$ERROR_CODES.PASSWORD_TOO_SHORT
-          ) {
-            setErrors((prev) => ({
-              ...prev,
-              password: ctx.error.message,
-            }));
-            return;
-          }
+    setErrors({});
 
-          if (errorCode === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
-            setErrors((prev) => ({
-              ...prev,
-              root: "User with this email already exists.",
-            }));
-            return;
-          }
-        },
+    const { data, error } = await authClient.signUp.email({
+      name: credentials.username,
+      email: credentials.email,
+      password: credentials.password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      handleSignUpError(error);
+      return;
+    }
+    console.log("data", data);
+
+    if (!data) {
+      return;
+    }
+
+    // User is coming from invitation, accept the invitation after sign up
+    if (invitationId) {
+      const { data, error } = await authClient.organization.acceptInvitation({
+        invitationId,
+      });
+
+      if (data) {
+        push(getStartPageRedirectUrl(data.member.role as Role | undefined));
       }
-    );
+
+      if (error) {
+        toast.error("Failed to accept invitation: " + error.message);
+        return;
+      }
+    }
+
+    // User is not coming from invitation just proceed with normal sign up flow
+    const session = await authClient.getSession();
+    setLoading(false);
+    push(getStartPageRedirectUrl(session.data?.user?.role as Role | undefined));
   }
 
   return (

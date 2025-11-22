@@ -8,6 +8,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { Invites } from "./_components/invites/Invites";
 import { ShelterDetails } from "./_components/shelter-details/ShelterDetails";
 import { ShelterMembersTable } from "./_components/shelter-members/ShelterMembersTable";
 
@@ -86,8 +87,7 @@ export default async function DetailsPage({
               <CardHeader>
                 <CardTitle>Shelter members</CardTitle>
                 <CardDescription>
-                  Manage your shelter members here. Click save when you&apos;re
-                  done.
+                  Manage your shelter members here.
                 </CardDescription>
               </CardHeader>
 
@@ -101,13 +101,13 @@ export default async function DetailsPage({
           <TabsContent value="pending-approvals">
             <Card>
               <CardHeader>
-                <CardTitle>Pending Approvals</CardTitle>
-                <CardDescription>
-                  Accept or reject pending member requests here.
-                </CardDescription>
+                <CardTitle>Invites</CardTitle>
+                <CardDescription>Check invites here.</CardDescription>
               </CardHeader>
 
-              <CardContent className="p-4"></CardContent>
+              <CardContent className="p-4">
+                <Invites shelterId={shelterId} />
+              </CardContent>
             </Card>
           </TabsContent>
         </Tabs>

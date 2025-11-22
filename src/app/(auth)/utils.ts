@@ -5,7 +5,11 @@ export function getStartPageRedirectUrl(userRole: Role | undefined) {
 
   const roles = userRole.split(",");
 
-  if (roles.includes(Roles.shelterOwner) || roles.includes(Roles.admin)) {
+  if (
+    roles.includes(Roles.shelterOwner) ||
+    roles.includes(Roles.admin) ||
+    roles.includes(Roles.shelterAdmin)
+  ) {
     return "/dashboard";
   }
 

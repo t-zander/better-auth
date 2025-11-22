@@ -5,6 +5,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { authClient } from "@/lib/auth/client";
 import { useParams } from "next/navigation";
 import { IoPersonAddOutline } from "react-icons/io5";
+import { toast } from "sonner";
 import { FormValues, InviteNewMemberDialog } from "./InviteNewMemberDialog";
 
 export function InviteNewMember() {
@@ -17,12 +18,26 @@ export function InviteNewMember() {
   });
 
   async function onSubmit({ email, role }: FormValues) {
-    await authClient.organization.inviteMember({
-      email,
-      role,
-      organizationId: shelterId,
-      resend: true,
-    });
+    try {
+      const result = await authClient.organization.inviteMember({
+        email,
+        role,
+        organizationId: shelterId,
+        resend: true,
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+
+      toast.success("Invite sent successfully");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to send invite");
+      } else {
+        toast.error("Failed to send invite");
+      }
+    }
   }
 
   return (
