@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Roles } from "@/lib/auth/permissions";
 import Link from "next/link";
-import { getUserShelters } from "../actions";
+import { getUserShelters } from "../dataFetchers";
+import { SheltersList } from "./SheltersList";
 
 export async function MyShelters() {
   const data = await getUserShelters(Roles.shelterOwner);
@@ -21,24 +22,7 @@ export async function MyShelters() {
     </div>
   ) : (
     <div className="flex flex-col flex-1 space-y-4">
-      {data.shelters.map((shelter) => (
-        <div
-          key={shelter.id}
-          className="p-4 border rounded-md shadow-sm hover:shadow-md transition-shadow flex justify-between items-center"
-        >
-          <div>
-            <h2 className="text-lg font-semibold">{shelter.name}</h2>
-            <p className="text-sm text-muted-foreground">
-              {shelter.description}
-            </p>
-          </div>
-          <Button className="mt-2" asChild>
-            <Link href={`/shelters-management/edit/${shelter.id}`}>
-              Manage Shelter
-            </Link>
-          </Button>
-        </div>
-      ))}
+      <SheltersList shelters={data.shelters} />
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default async function ShelterEditLayout({
   }
 
   return (
-    <div className="flex gap-10">
+    <div className="flex gap-6">
       <aside className="w-[320px] flex-shrink-0">
         <ShelterSidebar shelterId={shelterId} />
       </aside>

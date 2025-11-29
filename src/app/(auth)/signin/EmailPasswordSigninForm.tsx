@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
-import { Role } from "@/lib/auth/permissions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -31,24 +30,28 @@ export function EmailPasswordSigninForm() {
 
   const form = useForm<FormData>({
     resolver: async (formData) => {
+      const resolverErrors = {
+        ...(errors.root
+          ? {
+              root: {
+                type: "required",
+                message: errors.root,
+              },
+            }
+          : {}),
+        ...(errors.password
+          ? {
+              password: {
+                type: "required",
+                message: errors.password,
+              },
+            }
+          : {}),
+      };
+
       return {
-        values: formData,
-        errors: {
-          ...(errors.root
-            ? {
-                root: {
-                  message: errors.root,
-                },
-              }
-            : {}),
-          ...(errors.password
-            ? {
-                password: {
-                  message: errors.password,
-                },
-              }
-            : {}),
-        },
+        values: Object.keys(resolverErrors).length > 0 ? {} : formData,
+        errors: resolverErrors,
       };
     },
     defaultValues: {
@@ -58,48 +61,49 @@ export function EmailPasswordSigninForm() {
     reValidateMode: "onChange",
   });
 
-  async function onSubmit(credentials: FormData) {
-    await authClient.signIn.email(
-      {
-        email: credentials.email,
-        password: credentials.password,
-      },
-      {
-        onRequest: () => {
-          setLoading(true);
-        },
-        onSuccess: async () => {
-          const session = await authClient.getSession();
-          push(
-            getStartPageRedirectUrl(
-              session?.data?.user?.role as Role | undefined
-            )
-          );
-        },
-        onError: (ctx) => {
-          const errorCode = ctx?.error?.code;
-          setLoading(false);
+  function handleErrorCode(errorCode: string, message?: string) {
+    if (errorCode === "INVALID_EMAIL_OR_PASSWORD") {
+      setErrors((prev) => ({
+        ...prev,
+        root: message ?? "",
+      }));
+    } else if (errorCode.includes("PASSWORD")) {
+      setErrors((prev) => ({
+        ...prev,
+        password: message ?? "",
+      }));
+    } else {
+      toast.error(message ?? "An unknown error occurred. Please try again.");
+    }
+  }
 
-          if (errorCode) {
-            if (errorCode === "INVALID_EMAIL_OR_PASSWORD") {
-              setErrors((prev) => ({
-                ...prev,
-                root: ctx.error.message,
-              }));
-            } else if (errorCode.includes("PASSWORD")) {
-              setErrors((prev) => ({
-                ...prev,
-                password: ctx.error.message,
-              }));
-            } else {
-              toast(ctx.error.message);
-            }
-          } else {
-            toast(ctx.error.message);
-          }
-        },
+  async function onSubmit(credentials: FormData) {
+    setLoading(true);
+
+    const { data, error } = await authClient.signIn.email({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    setLoading(false);
+
+    if (error) {
+      const errorCode = error?.code;
+
+      if (!errorCode) {
+        toast.error(error.message ?? "An unknown error occurred.");
+        return;
       }
-    );
+
+      handleErrorCode(error?.code || "", error?.message);
+      return;
+    }
+
+    if (!data) {
+      return;
+    }
+
+    const session = await authClient.getSession();
+    push(getStartPageRedirectUrl(session?.data?.user?.role));
   }
 
   return (

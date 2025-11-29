@@ -60,14 +60,14 @@ export default async function EditShelterPage({
   const basePath = getBasePath(shelterId);
 
   return (
-    <div className="flex flex-col h-full gap-6">
+    <div className="flex flex-col h-full gap-2">
       {pets.length > 0 ? (
         <>
           <div className="flex-shrink-0">
-            <h2 className="text-2xl font-bold">My Pets</h2>
+            <h2 className="text-2xl font-bold">Shelter Pets</h2>
           </div>
           <div className="flex-grow overflow-y-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {pets.slice(0, 6).map((pet) => (
                 <Card key={pet.id}>
                   <CardHeader className="p-0">
