@@ -1,8 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/lib/auth";
-import { Roles } from "@/lib/auth/permissions";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { hasRole } from "../../../lib/auth/utils";
+import { AdministratingShelters } from "./_components/AdministratingShelters";
 import { MyShelters } from "./_components/MyShelters";
 
 export default async function SheltersPage() {
@@ -10,20 +11,27 @@ export default async function SheltersPage() {
     headers: await headers(),
   });
 
-  const roles = session.user?.role?.split(",") ?? [];
-
-  if ((roles.includes("user") && roles.length === 1) || roles.length === 0) {
+  if (!session.user?.role) {
     redirect("/signin");
   }
 
-  return (
-    <Tabs defaultValue="my-shelters" className="w-full">
+  const isShelterOwner = hasRole(session.user.role, "shelterOwner");
+  const isShelterAdmin = hasRole(session.user.role, "shelterAdmin");
+
+  if (!isShelterOwner && !isShelterAdmin) {
+    redirect("/");
+  }
+
+  // User is shelter owner and also a shelter admin in some shelters
+  // show both tabs
+  if (isShelterOwner && isShelterAdmin) {
+    <Tabs defaultValue={"my-shelters"} className="w-full">
       <TabsList>
-        {roles.includes(Roles.shelterOwner) && (
+        {isShelterOwner && (
           <TabsTrigger value="my-shelters">My shelters</TabsTrigger>
         )}
 
-        {roles.includes(Roles.shelterAdmin) && (
+        {isShelterAdmin && (
           <TabsTrigger value="admin-shelters" className="flex flex-col flex-1">
             Administrating shelters
           </TabsTrigger>
@@ -33,8 +41,14 @@ export default async function SheltersPage() {
         <MyShelters />
       </TabsContent>
       <TabsContent value="admin-shelters">
-        {/* Content for Administrating shelters */}
+        <AdministratingShelters />
       </TabsContent>
-    </Tabs>
-  );
+    </Tabs>;
+  }
+
+  if (isShelterOwner) {
+    return <MyShelters />;
+  }
+
+  return <AdministratingShelters />;
 }

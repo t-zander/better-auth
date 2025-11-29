@@ -7,16 +7,31 @@ import { IoLogoGoogle } from "react-icons/io5";
 import { toast } from "sonner";
 import { GoogleSignOnFailed } from "../GoogleSignOnFailed";
 
-export function GoogleSignUp() {
+interface GoogleSignUpProps {
+  invitationId?: string;
+}
+
+export function GoogleSignUp({ invitationId }: GoogleSignUpProps) {
   const searchParams = useSearchParams();
   const errorType = searchParams.get("type");
   const error = searchParams.get("error");
+  const encodedInvitationParams = invitationId
+    ? new URLSearchParams({
+        invitationId,
+      })
+    : null;
 
   const handleGoogleSignUp = async () => {
     authClient.signIn.social(
       {
         provider: "google",
-        callbackURL: "/social-signon-success",
+        /* 
+        If invitationId is present it will be included in the callbackURL as a query param
+        So after successful social sign on user can be redirected to proper flow (accept invitation)
+        */
+        callbackURL: encodedInvitationParams
+          ? `/social-signon-success?${encodedInvitationParams.toString()}`
+          : "/social-signon-success",
         errorCallbackURL: "/signup?type=google_auth",
       },
       {

@@ -1,12 +1,14 @@
+import "server-only";
+
 import { auth } from "@/lib/auth";
 import { Role } from "@/lib/auth/permissions";
 import { headers } from "next/headers";
 
-type GetUserSheltersSuccess = {
+export type GetUserSheltersSuccess = {
   success: true;
   shelters: Awaited<ReturnType<typeof auth.api.listOrganizations>>;
 };
-type GetUserSheltersError = {
+export type GetUserSheltersError = {
   success: false;
   error: string;
 };

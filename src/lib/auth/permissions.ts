@@ -6,7 +6,7 @@ import {
 
 const statement = {
   ...defaultStatements,
-  shelter: ["create", "update", "delete"],
+  shelter: ["view", "own", "create", "update", "delete"],
   shelterMembers: ["add", "remove", "invite", "view"],
   animal: ["create", "update", "delete"],
   animalProfile: ["create", "update", "delete"],
@@ -18,13 +18,13 @@ const statement = {
 export const ac = createAccessControl(statement);
 
 export const shelterOwner = ac.newRole({
-  shelter: ["create", "update", "delete"],
+  shelter: ["view", "create", "update", "delete"],
   shelterMembers: ["add", "remove", "invite", "view"],
   invitation: ["create", "cancel", "view"],
 });
 
 export const shelterAdmin = ac.newRole({
-  shelter: ["update"],
+  shelter: ["view", "update"],
   animalProfile: ["create", "update", "delete"],
 });
 

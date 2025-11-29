@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
-import { Role } from "@/lib/auth/permissions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -116,7 +115,6 @@ export function EmailPasswordSignupForm({
       handleSignUpError(error);
       return;
     }
-    console.log("data", data);
 
     if (!data) {
       return;
@@ -129,7 +127,7 @@ export function EmailPasswordSignupForm({
       });
 
       if (data) {
-        push(getStartPageRedirectUrl(data.member.role as Role | undefined));
+        push(getStartPageRedirectUrl(data.member.role));
       }
 
       if (error) {
@@ -139,9 +137,8 @@ export function EmailPasswordSignupForm({
     }
 
     // User is not coming from invitation just proceed with normal sign up flow
-    const session = await authClient.getSession();
     setLoading(false);
-    push(getStartPageRedirectUrl(session.data?.user?.role as Role | undefined));
+    push(getStartPageRedirectUrl(""));
   }
 
   return (

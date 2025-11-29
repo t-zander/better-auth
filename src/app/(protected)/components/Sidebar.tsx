@@ -5,9 +5,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Roles } from "@/lib/auth/permissions";
+import { getUserRoles } from "@/lib/auth/utils";
 import Link from "next/link";
 import { IoHome, IoPawSharp, IoPerson, IoStatsChart } from "react-icons/io5";
-import { Roles } from "../../../lib/auth/permissions";
 
 const shelterAdminLinks = [
   {
@@ -104,7 +105,7 @@ const animalsLink = {
 
 export function Sidebar({ role }: { role: string }) {
   const getLinksBasedOnRole = (role: string) => {
-    const roles = role.split(",");
+    const roles = getUserRoles(role);
 
     const links = [];
 
@@ -112,7 +113,10 @@ export function Sidebar({ role }: { role: string }) {
       links.push(...adminLinks);
     }
 
-    if (roles.includes(Roles.shelterOwner)) {
+    if (
+      roles.includes(Roles.shelterOwner) ||
+      roles.includes(Roles.shelterAdmin)
+    ) {
       links.push(sheltersLink);
     }
 

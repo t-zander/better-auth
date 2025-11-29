@@ -1,16 +1,47 @@
 import { auth } from "@/lib/auth";
-import { Role, Roles } from "@/lib/auth/permissions";
+import { updateUserRole } from "@/lib/db/user";
+import { SearchParams } from "@/lib/ui/types";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getStartPageRedirectUrl } from "../utils";
+import {
+  extractInvitationInfoFromSearchParams,
+  getStartPageRedirectUrl,
+} from "../utils";
 
-export default async function SocialSignOnSuccessPage() {
+export default async function SocialSignOnSuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const invitationInfoParams = extractInvitationInfoFromSearchParams(
+    await searchParams
+  );
+
+  // User used single sign on and came from an invite
+  // ensure db is updated accordingly and redirect to proper page
+  if (invitationInfoParams.invitationId) {
+    const data = await auth.api.acceptInvitation({
+      headers: await headers(),
+      body: {
+        invitationId: invitationInfoParams.invitationId,
+      },
+    });
+
+    if (data) {
+      await updateUserRole({
+        role: data.invitation.role,
+        userId: data.member.userId,
+      });
+      redirect(getStartPageRedirectUrl(data.invitation.role));
+    }
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (session && session.user.role && session.user.role in Roles) {
-    redirect(getStartPageRedirectUrl(session.user.role as Role));
+  if (session && !!session.user.role) {
+    redirect(getStartPageRedirectUrl(session.user.role));
   } else {
     redirect("/signin");
   }
